@@ -3,7 +3,6 @@ package flight.voegol;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ public class VoeGol {
 	private static final String CHARSET = "UTF-8";
 	private static final String URL_GET = "http://compre2.voegol.com.br/Select2.aspx";
 	private static final String URL_POST = "http://compre2.voegol.com.br/CSearch.aspx?culture=pt-br";
+	private static final String UNAVAILABLE = "indisponível";
 
 	private String from;
 	private String to;
@@ -52,8 +52,9 @@ public class VoeGol {
 		this.adult = adult;
 		this.child = child;
 	}
-	
-	public VoeGol(String from, String to, int dayDep, int monthDep, int yearDep, int dayArr, int monthArr, int yearArr, int adult, int child) {
+
+	public VoeGol(String from, String to, int dayDep, int monthDep, int yearDep, int dayArr, int monthArr, int yearArr,
+			int adult, int child) {
 		this(from, to, LocalDate.of(yearDep, monthDep, dayDep), LocalDate.of(yearArr, monthArr, dayArr), adult, child);
 	}
 
@@ -77,16 +78,18 @@ public class VoeGol {
 			if (content != null) {
 				try {
 					content.close();
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 			}
-			
+
 			if (client != null) {
 				try {
 					client.close();
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 			}
 		}
-		
+
 		return findFlight(document);
 	}
 
@@ -104,27 +107,37 @@ public class VoeGol {
 	}
 
 	private Flight findFlight(Document document) throws SearchException {
-		BigDecimal total = new BigDecimal(0);
-		Elements prices = document.select("li.active span span:last-child");
+		Elements trechos = document.select("li.active .price");
 
-		if (prices.size() != 2) {
-			throw new SearchException("Flight not found");
+		if (trechos.size() != 2) {
+			throw new SearchException("Ida ou volta não encontrada");
 		}
 
-		for (Element price : prices) {
-			Double dblPrice = new Double(0);
-
-			if (price.text() != null && price.text().length() > 0) {
-				// TODO ajustar esta conversão
-				dblPrice = new Double(price.text().replace(".", "").replace(",", "."));
-				BigDecimal bgdPrice = new BigDecimal(dblPrice);
-				total = total.add(bgdPrice);
-			}
-		}
-		
 		String dateDeparture = ddep.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString();
 		String dateArrival = dret.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString();
-		Flight flight = new Flight(from, to, dateDeparture, dateArrival, adult, child, total.floatValue());
+		Flight flight = new Flight(from, to, dateDeparture, dateArrival, adult, child);
+		boolean ida = true;
+		for (Element trecho : trechos) {
+			if (UNAVAILABLE.equalsIgnoreCase(trecho.text())) {
+				if (ida) {
+					throw new SearchException("IDA indisponível");
+				} else {
+					throw new SearchException("VOLTA indisponível");
+				}
+			} else {
+				Element elmPrice = trecho.select("span span:last-child").first();
+				if (elmPrice.text() != null && elmPrice.text().length() > 0) {
+					float price = Float.parseFloat(elmPrice.text().replace(".", "").replace(",", "."));
+					if (ida) {
+						flight.setPriceDep(price);
+					} else {
+						flight.setPriceRet(price);
+					}
+				}
+
+			}
+			ida = false;
+		}
 
 		return flight;
 	}
