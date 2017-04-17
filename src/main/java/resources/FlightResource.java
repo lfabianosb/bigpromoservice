@@ -45,6 +45,8 @@ public class FlightResource {
 			
 			return Response.status(Response.Status.OK).entity(json).build();
 		} catch (SearchException e) {
+			System.err.println("Erro: " + e.getMessage());
+			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}
 
