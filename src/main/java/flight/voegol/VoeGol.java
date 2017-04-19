@@ -70,8 +70,8 @@ public class VoeGol {
 			// Faz esta requisição para setar os parâmetros na sessão
 			client.execute(post);
 
-			HttpResponse r = client.execute(new HttpGet(URL_GET));
-			content = r.getEntity().getContent();
+			HttpResponse response = client.execute(new HttpGet(URL_GET));
+			content = response.getEntity().getContent();
 			document = Jsoup.parse(content, CHARSET, URL_GET);
 		} catch (Exception e) {
 			throw new SearchException(e);
