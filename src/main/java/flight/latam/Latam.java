@@ -69,7 +69,6 @@ public class Latam {
 
 		boolean ida = true;
 		for (Element trecho : trechos) {
-			System.out.println(trecho.text());
 			Elements prices = trecho.select("ul.selected .tc");
 			for (Element price : prices) {
 				// TODO Ajustar a conversão
