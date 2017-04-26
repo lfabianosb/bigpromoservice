@@ -41,6 +41,7 @@ public class VoeGol {
 
 	/**
 	 * Realizar a pesquisa
+	 * 
 	 * @return Voo encontrado
 	 * @throws SearchException
 	 */
@@ -80,6 +81,7 @@ public class VoeGol {
 
 	/**
 	 * Configurar a pesquisa via post HTTP
+	 * 
 	 * @return Post HTTP configurado
 	 * @throws SearchException
 	 */
@@ -96,6 +98,7 @@ public class VoeGol {
 
 	/**
 	 * Procurar os voos da ida e volta dado um document HTML
+	 * 
 	 * @param document
 	 * @return Voo encontrado no documento
 	 * @throws SearchException
@@ -135,6 +138,7 @@ public class VoeGol {
 
 	/**
 	 * Configurar o cliente HTTP que fará o request
+	 * 
 	 * @return Cliente HTTP configurado
 	 */
 	private CloseableHttpClient buildHttpClient() {
@@ -148,6 +152,7 @@ public class VoeGol {
 
 	/**
 	 * Adicionar os parâmetros no post HTTP
+	 * 
 	 * @param post
 	 * @throws UnsupportedEncodingException
 	 */
