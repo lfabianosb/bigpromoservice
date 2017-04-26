@@ -21,35 +21,30 @@ public class FlightResource {
 	@Path("/voegol")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response voeGol(
-			@QueryParam("from") String from, 
+			@QueryParam("from") String from,
 			@QueryParam("to") String to,
-			@QueryParam("dayDep") int dayDep, 
-			@QueryParam("monthDep") int monthDep, 
-			@QueryParam("yearDep") int yearDep,
-			@QueryParam("dayArr") int dayArr, 
-			@QueryParam("monthArr") int monthArr, 
-			@QueryParam("yearArr") int yearArr,
-			@QueryParam("adult") int adult, 
+			@QueryParam("dep") String dep,
+			@QueryParam("ret") String ret,
+			@QueryParam("adult") int adult,
 			@QueryParam("child") int child) {
 
-		// TODO tratar os parâmetros
-
-		VoeGol voegol = new VoeGol(from, to, dayDep, monthDep, yearDep, dayArr, monthArr, yearArr, adult, child);
+		//TODO Validação: as datas devem estar no formato dd/mm/yyyy
+		
+		Flight findFlight = new Flight(from, to, dep, ret, adult, child);
+		VoeGol voegol = new VoeGol(findFlight);
 		try {
 			Flight flight = voegol.search();
-			
-			//Converter POJO em JSON string
+
+			// Converter POJO em JSON string
 			GsonBuilder builder = new GsonBuilder();
 			Gson gson = builder.create();
 			String json = gson.toJson(flight);
-			
+
 			return Response.status(Response.Status.OK).entity(json).build();
 		} catch (SearchException e) {
 			System.err.println("Erro: " + e.getMessage());
 			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
 		}
-
 	}
-
 }
