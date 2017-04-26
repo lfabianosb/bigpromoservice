@@ -50,9 +50,6 @@ public class Latam {
 				+ "&infants=0&LANGUAGE=BR&SITE=JJBKJJBK&WDS_MARKET=BR&MARKETING_CABIN=E";
 
 		CloseableHttpClient httpClient = buildHttpClient();
-		
-		System.out.println(URL + params);
-		
 		HttpGet httpGet = new HttpGet(URL + params);
 		CloseableHttpResponse response = null;
 		String htmlPage = null;
@@ -75,13 +72,12 @@ public class Latam {
 			System.out.println(trecho.text());
 			Elements prices = trecho.select("ul.selected .tc");
 			for (Element price : prices) {
+				// TODO Ajustar a conversão
 				float prc = Float.parseFloat(price.text().replace(".", "").replace(",", "."));
 				if (ida) {
 					flight.setPriceDeparture(prc);
-					System.out.println("IDA: " + price.text());
 				} else {
 					flight.setPriceReturn(prc);
-					System.out.println("VOLTA: " + price.text());
 				}
 			}
 
@@ -89,7 +85,6 @@ public class Latam {
 		}
 
 		return flight;
-
 	}
 
 	/**
