@@ -19,7 +19,7 @@ import flight.voegol.exception.SearchException;
 public class FlightResource {
 
 	@GET
-	@Path("/voegol")
+	@Path("/gol")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response voeGol(
 			@QueryParam("from") String from,
