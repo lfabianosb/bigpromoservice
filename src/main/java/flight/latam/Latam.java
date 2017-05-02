@@ -22,7 +22,7 @@ import flight.voegol.exception.SearchException;
 public class Latam {
 
 	private static final String CHARSET = "UTF-8";
-	private static final int CONNECTION_TIMEOUT = 15000; // 15s
+	private static final int CONNECTION_TIMEOUT = Integer.parseInt(System.getenv("CONNECTION_TIMEOUT"));
 	private static final String URL_BASE = "https://book.latam.com";
 	private static final String URL = URL_BASE + "/TAM/dyn/air/booking/upslDispatcher";
 
@@ -58,6 +58,10 @@ public class Latam {
 			htmlPage = EntityUtils.toString(response.getEntity(), CHARSET);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		if (htmlPage == null || htmlPage.length() == 0) {
+			throw new SearchException("Não houve resposta do endereço " + URL + params);
 		}
 
 		Document doc = Jsoup.parse(htmlPage, URL_BASE);
