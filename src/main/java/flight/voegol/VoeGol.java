@@ -31,7 +31,7 @@ public class VoeGol {
 	private static final String URL_GET = "http://compre2.voegol.com.br/Select2.aspx";
 	private static final String URL_POST = "http://compre2.voegol.com.br/CSearch.aspx?culture=pt-br";
 	private static final String UNAVAILABLE = "indisponível";
-	private static final int CONNECTION_TIMEOUT = 15000; // 15s
+	private static final int CONNECTION_TIMEOUT = Integer.parseInt(System.getenv("CONNECTION_TIMEOUT"));
 
 	private Flight flight;
 
@@ -142,9 +142,12 @@ public class VoeGol {
 	 * @return Cliente HTTP configurado
 	 */
 	private CloseableHttpClient buildHttpClient() {
-		RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.DEFAULT)
-				.setConnectionRequestTimeout(CONNECTION_TIMEOUT).setConnectTimeout(CONNECTION_TIMEOUT)
-				.setSocketTimeout(CONNECTION_TIMEOUT).build();
+		RequestConfig globalConfig = RequestConfig.custom()
+				.setCookieSpec(CookieSpecs.DEFAULT)
+				.setConnectionRequestTimeout(CONNECTION_TIMEOUT)
+				.setConnectTimeout(CONNECTION_TIMEOUT)
+				.setSocketTimeout(CONNECTION_TIMEOUT)
+				.build();
 		CookieStore cookieStore = new BasicCookieStore();
 
 		return HttpClients.custom().setDefaultRequestConfig(globalConfig).setDefaultCookieStore(cookieStore).build();
